@@ -1,0 +1,11 @@
+[package]
+name = "data_structure"
+version = "0.1.0"
+edition = "2024"
+description = "A Rust library for implementing and managing common data structures."
+license = "MIT OR Apache-2.0"
+documentation = "https://docs.rs/data_structure"
+homepage = "https://github.com/independence-code/rust_data_structure"
+repository = "https://github.com/independence-code/rust_data_structure"
+
+[dependencies]
