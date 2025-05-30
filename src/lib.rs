@@ -151,9 +151,11 @@ pub mod list {
             for index in index..self.length {
                 self.element[index - 1] = self.element[index];
             }
+            self.element[self.length - 1] = None;
+            self.length -= 1;
             Ok(())
         }
-
+        
         /// 清除列表中的所有元素。
         pub fn clear(&mut self) {
             for index in 0..self.length {
