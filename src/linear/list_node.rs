@@ -1,6 +1,6 @@
-/// A node for linked list data structure
+/// 链表节点结构体
 ///
-/// # Examples
+/// # 示例
 /// ```
 /// use data_structure::linear::list_node::ListNode;
 /// let mut head = ListNode::<i32>::new();
@@ -8,16 +8,16 @@
 /// head.push(2);
 /// ```
 pub struct ListNode<T> {
-    /// The data stored in this node, None for sentinel node
+    /// 节点存储的数据，哨兵节点为None
     pub data: Option<T>,
-    /// Pointer to the next node
+    /// 指向下一个节点的指针
     pub next: Option<Box<ListNode<T>>>,
 }
 
 impl<T> ListNode<T> {
-    /// Creates a new sentinel node (with no data)
+    /// 创建一个新的哨兵节点(不包含数据)
     ///
-    /// # Examples
+    /// # 示例
     /// ```
     /// use data_structure::linear::list_node::ListNode;
     /// let sentinel = ListNode::<i32>::new();
@@ -30,10 +30,10 @@ impl<T> ListNode<T> {
         }
     }
 
-    /// Gets a reference to the node at the given index (0-based)
-    /// Returns None if index is out of bounds
+    /// 获取指定索引(0-based)节点的不可变引用
+    /// 如果索引越界则返回None
     ///
-    /// # Examples
+    /// # 示例
     /// ```
     /// use data_structure::linear::list_node::ListNode;
     /// let mut head = ListNode::new();
@@ -48,10 +48,10 @@ impl<T> ListNode<T> {
         Some(current)
     }
 
-    /// Gets a mutable reference to the node at the given index (0-based)
-    /// Returns None if index is out of bounds
+    /// 获取指定索引(0-based)节点的可变引用
+    /// 如果索引越界则返回None
     ///
-    /// # Examples
+    /// # 示例
     /// ```
     /// use data_structure::linear::list_node::ListNode;
     /// let mut head = ListNode::new();
@@ -74,31 +74,31 @@ impl<T> ListNode<T> {
         current.next.as_mut().map(|node| &mut **node)
     }
 
-    /// Removes the last node in the list
+    /// 删除链表尾部节点
     ///
-    /// # Panics
-    /// Panics if called on an empty list (only sentinel node exists)
-    ///
-    /// # Examples
+    /// # 示例
     /// ```
     /// use data_structure::linear::list_node::ListNode;
     /// let mut head = ListNode::new();
     /// head.push(1);
     /// head.push(2);
     /// head.pop_tail();
-    /// assert!(head.get(1).unwrap().next.is_none());
+    /// assert_eq!(head.length(), 1);
     /// ```
     pub fn pop_tail(&mut self) {
-        let mut current = self;
-        while current.next.is_some() {
-            current = current.next.as_mut().unwrap();
+        if self.next.is_none() {
+            return;
         }
-        current.next = None;
+        let mut current=self;
+        while current.next.as_ref().unwrap().next.is_none() {
+            current=current.next.as_mut().unwrap();
+        }
+        current.next=None;
     }
 
-    /// Appends a new node with given data to the end of the list
+    /// 在链表尾部添加新节点
     ///
-    /// # Examples
+    /// # 示例
     /// ```
     /// use data_structure::linear::list_node::ListNode;
     /// let mut head = ListNode::new();
@@ -114,6 +114,64 @@ impl<T> ListNode<T> {
             data: Some(data),
             next: None,
         }));
+    }
+
+    /// 在指定位置插入新节点
+    ///
+    /// # 示例
+    /// ```
+    /// use data_structure::linear::list_node::ListNode;
+    /// let mut head = ListNode::new();
+    /// head.push(1);
+    /// head.push(3);
+    /// head.insert(1, 2);
+    /// assert_eq!(head.get(1).unwrap().data, Some(2));
+    /// ```
+    pub fn insert(&mut self, index: usize, data: T){
+        let current= self.get_mut(index-1).unwrap();
+        let new_node=Box::new(ListNode{
+           data:Some(data), 
+            //take临时取出current.next的所有权
+            next:current.next.take(),
+        });
+         current.next=Some(new_node);
+    }
+
+    /// 删除指定位置的节点
+    ///
+    /// # 示例
+    /// ```
+    /// use data_structure::linear::list_node::ListNode;
+    /// let mut head = ListNode::new();
+    /// head.push(1);
+    /// head.push(2);
+    /// head.remove(1);
+    /// assert_eq!(head.length(), 1);
+    /// ```
+    pub fn remove(&mut self, index: usize)  {
+        let current = self.get_mut(index - 1).unwrap();
+        let removed_node = current.next.take().unwrap();
+        current.next = removed_node.next;
+    }
+
+    /// 获取链表长度(不包含哨兵节点)
+    ///
+    /// # 示例
+    /// ```
+    /// use data_structure::linear::list_node::ListNode;
+    /// let mut head = ListNode::new();
+    /// head.push(1);
+    /// head.push(2);
+    /// assert_eq!(head.length(), 2);
+    /// ```
+    pub fn length(&mut self)-> usize{
+        let mut count:usize = 0;
+        let mut current = self;
+        while current.next.is_some(){
+            count+=1;
+            current=current.next.as_mut().unwrap();
+        }
+        count
     }
 }
 
@@ -131,14 +189,26 @@ mod tests {
     }
     #[test]
     fn test_get_mut() {
+        // 建议恢复被注释的测试代码
         let mut head: Box<ListNode<i32>> = Box::new(ListNode::new());
         for i in 1..6 {
             head.push(i);
         }
-        let zero = head.get(0).unwrap();
-        assert!(zero.data.is_none());
         let value = head.get_mut(1).unwrap();
         assert_eq!(value.data, Some(1));
+        // 恢复测试代码：
+        let value2 = head.get_mut(2).unwrap();
+        assert_eq!(value2.data, Some(2));
+        let zero = head.get(0).unwrap();
+        assert!(zero.data.is_none());
     }
-
+    #[test]
+    fn test_length(){
+         let mut list: Box<ListNode<i32>> = Box::new(ListNode::new());
+        list.push(1);
+        list.push(2);
+        list.push(3);
+        list.push(4);
+        assert_eq!( list.length(),4);
+    }
 }
