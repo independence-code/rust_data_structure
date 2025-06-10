@@ -1,3 +1,9 @@
+//! Sorting algorithms implementation
+//! 
+//! Currently provides quick sort implementation for i32 arrays.
+
+/// Internal helper function for quick sort
+/// Partitions the array and returns the pivot index
 fn partition(array: &mut [i32], low: usize, high: usize) -> usize {
     let pivot = array[low];
     let (mut left, mut right) = (low, high);
@@ -18,6 +24,21 @@ fn partition(array: &mut [i32], low: usize, high: usize) -> usize {
     left
 }
 
+/// Sorts an i32 array in-place using quick sort algorithm
+///
+/// # Arguments
+/// * `array` - Mutable slice of i32 to be sorted
+/// * `low` - Starting index of the range to sort (inclusive)
+/// * `high` - Ending index of the range to sort (inclusive)
+///
+/// # Examples
+/// ```
+/// use rust_data_structure::sorting::quick;
+///
+/// let mut arr = [5, 2, 4, 1, 3];
+/// quick(&mut arr, 0, 4);
+/// assert_eq!(arr, [1, 2, 3, 4, 5]);
+/// ```
 pub fn quick(array: &mut [i32], low: usize, high: usize) {
     if low < high {
         let pivot_loc = partition(array, low, high);
