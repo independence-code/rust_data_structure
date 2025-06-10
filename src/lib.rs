@@ -1,4 +1,5 @@
 pub mod linear;
+pub mod sorting;
 
 #[cfg(test)]
 mod tests {
