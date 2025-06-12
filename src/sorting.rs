@@ -33,7 +33,7 @@ fn partition(array: &mut [i32], low: usize, high: usize) -> usize {
 ///
 /// # Examples
 /// ```
-/// use rust_data_structure::sorting::quick;
+/// use data_structure::sorting::quick;
 ///
 /// let mut arr = [5, 2, 4, 1, 3];
 /// quick(&mut arr, 0, 4);
